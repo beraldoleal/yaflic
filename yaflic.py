@@ -3,6 +3,7 @@ import pygtk
 pygtk.require("2.0")
 import gtk, gobject
 import os
+from YaflicPreferences import *
 
 class Yaflic(object):
 	def __init__(self):
@@ -11,7 +12,7 @@ class Yaflic(object):
 		self.thumb_inside_hmarging = 50
 
 		builder = gtk.Builder()
-		builder.add_from_file("yaflic.glade")
+		builder.add_from_file("glade/yaflic.glade")
 		self.window = builder.get_object("MainWindow")
 		builder.connect_signals(self)
 		self.imageview = builder.get_object("ImageView")
@@ -30,8 +31,9 @@ class Yaflic(object):
 	def on_MainWindow_destroy(self, *args):
 		gtk.main_quit()
 
-	def on_imagemenuitem11_activate(self, *args):
-		gtk.main_quit()
+	def on_PreferencesMenu_activate(self, *args):
+		preferences = YaflicPreferences()
+		#gtk.main_quit()
 
 	def change_cursor(self, object, cursor):
 		if cursor is None:

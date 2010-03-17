@@ -87,12 +87,13 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button2">
+              <object class="GtkButton" id="OkButton">
                 <property name="label">gtk-ok</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
+                <signal name="clicked" handler="on_OkButton_clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -111,7 +112,7 @@
     </child>
     <action-widgets>
       <action-widget response="0">button1</action-widget>
-      <action-widget response="0">button2</action-widget>
+      <action-widget response="0">OkButton</action-widget>
     </action-widgets>
   </object>
 </interface>

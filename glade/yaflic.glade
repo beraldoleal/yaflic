@@ -119,11 +119,12 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="imagemenuitem11">
+                      <object class="GtkImageMenuItem" id="PreferencesMenu">
                         <property name="label">gtk-preferences</property>
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="activate" handler="on_PreferencesMenu_activate"/>
                       </object>
                     </child>
                   </object>

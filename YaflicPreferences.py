@@ -7,10 +7,11 @@ import os
 class YaflicPreferences(object):
 	def __init__(self):
 		builder = gtk.Builder()
-		builder.add_from_file("yaflic-preferences.glade")
-		builder.connect_signals({ "on_PreferencesDialog_destroy" : gtk.main_quit })
+		builder.add_from_file("glade/yaflic-preferences.glade")
 		self.dialog = builder.get_object("PreferencesDialog")
 		self.categories = builder.get_object("PreferencesCategories")
+
+		builder.connect_signals(self)
 
 		model = gtk.ListStore(str, gtk.gdk.Pixbuf)
 		pixbuf = gtk.gdk.pixbuf_new_from_file('images/prefs_general.png')
@@ -29,9 +30,11 @@ class YaflicPreferences(object):
 		while gtk.events_pending():
 			gtk.main_iteration()
 
-
 		self.dialog.show()
 
-if __name__ == "__main__":
-	dialog  = YaflicPreferences()
-	gtk.main()
+	def on_OkButton_clicked(self, *args):
+		self.on_PreferencesDialog_destroy(None)
+
+	def on_PreferencesDialog_destroy(self, *args):
+		self.dialog.destroy()
+
