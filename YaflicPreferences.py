@@ -3,15 +3,16 @@ import pygtk
 pygtk.require("2.0")
 import gtk, gobject
 import os
+import pango
 from SettingsHandler import *
 
 class YaflicPreferences(object):
 	def __init__(self):
 		builder = gtk.Builder()
 		builder.add_from_file("glade/yaflic-preferences.glade")
-		self.dialog = builder.get_object("PreferencesDialog")
-		self.categories = builder.get_object("PreferencesCategories")
-		self.treelist = builder.get_object("treeview1")
+		self.window = builder.get_object("PreferencesDialog")
+		self.categories = builder.get_object("IconViewPreferences")
+		self.treeview = builder.get_object("TreeViewAccountsList")
 		self.notebook = builder.get_object("notebook1")
 
 		builder.connect_signals(self)
@@ -37,42 +38,68 @@ class YaflicPreferences(object):
 
 		pro = gtk.gdk.pixbuf_new_from_file('images/flickr_pro.gif')
 		imagerenderer = gtk.CellRendererPixbuf()
-		column_pro = gtk.TreeViewColumn('Pro', imagerenderer, pixbuf=0)
+		column_pro = gtk.TreeViewColumn('Pro', imagerenderer, pixbuf=1)
+
 
 		textrenderer = gtk.CellRendererText()
-		column_login = gtk.TreeViewColumn("Login", textrenderer, text=1)
-		column_password = gtk.TreeViewColumn("Password", textrenderer, text=2)
+		column_login = gtk.TreeViewColumn("Login", textrenderer, text=2, font=0)
+		column_password = gtk.TreeViewColumn("Password", textrenderer, text=3, font=0)
 
-		self.treelist.append_column(column_pro)
-		self.treelist.append_column(column_login)
-		self.treelist.append_column(column_password)
 
-		model2 = gtk.ListStore(gtk.gdk.Pixbuf, str, str)
-		self.treelist.set_model(model2)
+		self.treeview.append_column(column_pro)
+		self.treeview.append_column(column_login)
+		self.treeview.append_column(column_password)
 
-		preferences = SettingsHandler()
-		accounts = preferences.get_accounts()
+		self.accounts_model = gtk.ListStore(str, gtk.gdk.Pixbuf, str, str, str)
+		self.treeview.set_model(self.accounts_model)
+
+		self.preferences = SettingsHandler()
+		accounts = self.preferences.get_accounts()
 		for account in accounts:
-			model2.append([pro, account[0], account[1]])
+			icon=None
+			if account[3] == "True":
+				icon=pro
+			font="sans 12"
+			if account[2] == "True":
+				font="sans bold 12"
+			self.accounts_model.append([font, icon, account[0], '[secret]', account[1]])
 
-		self.dialog.show_all()
+		self.window.show_all()
+
+	def remove_selected_account(self, treeiter):
+		self.preferences.remove_account("beraldoleal")
+		self.accounts_model.remove(treeiter)
 
 	def on_AccountAddButton_clicked(self, *args):
-		dm = gtk.MessageDialog(self.dialog, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, "Error to add account. Empty login!")
+		dm = gtk.MessageDialog(self.window, gtk.DIALOG_DESTROY_WITH_PARENT,
+                           gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE,
+                           "Error to add account. Empty login or password!")
 		dm.run()
 		dm.destroy()
 
-			
-	def on_PreferencesCategories_selection_changed(self, *args):
+	def on_IconViewPreferences_selection_changed(self, *args):
 		try:
 			current = args[0].get_selected_items()[0][0]
 			self.notebook.set_current_page(current)
 		except:
 			pass
 
+	def on_AccountRemoveButton_clicked(self, *args):
+		dialog = gtk.MessageDialog(self.window, gtk.DIALOG_MODAL,
+                               gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO,
+                               "Are you sure?")
+
+		selection = self.treeview.get_selection()
+		model, treeiter = selection.get_selected()
+		if treeiter is not None:
+			response = dialog.run()
+			dialog.destroy()
+			if response == gtk.RESPONSE_YES:
+				self.remove_selected_account(treeiter)
+
 	def on_OkButton_clicked(self, *args):
 		self.on_PreferencesDialog_destroy(None)
 
 	def on_PreferencesDialog_destroy(self, *args):
-		self.dialog.destroy()
+		self.window.destroy()
 

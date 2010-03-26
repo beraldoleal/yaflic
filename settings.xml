@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config version="1.0" serial="27" timestamp="1268222307.29">
+	<blbla>
+		<bla id="Beraldo"/>
+	</blbla>
 	<accounts>
-		<account login="beraldoleal" password="123" default="True" />
+		<account login="beraldoleal" password="123" default="True" pro="True"/>
 		<account login="joaodasilva" password="123" default="False" />
 	</accounts>
 </config>

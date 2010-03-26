@@ -20,9 +20,18 @@ class SettingsHandler():
 		for account in accounts:
 			accounts_dict.append([account.getAttribute("login"),
                             account.getAttribute("password"),
-                            account.getAttribute("default")])
+                            account.getAttribute("default"),
+                            account.getAttribute("pro")])
 		return accounts_dict
 
+	def remove_account(self, login):
+		accounts = self.doc.getElementsByTagName("account")
+		for account in accounts:
+			if account.getAttribute("login") == login:
+				account.parentNode.removeChild(account)
+				break
+		self.print_xml()
+		
 	def print_xml(self):
 		print self.doc.toxml("UTF-8")
 

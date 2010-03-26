@@ -5,6 +5,7 @@
   <object class="GtkDialog" id="PreferencesDialog">
     <property name="border_width">5</property>
     <property name="title" translatable="yes">YaFliC - Preferences</property>
+    <property name="resizable">False</property>
     <property name="default_width">500</property>
     <property name="default_height">400</property>
     <property name="type_hint">normal</property>
@@ -30,14 +31,14 @@
                   <object class="GtkAlignment" id="alignment1">
                     <property name="visible">True</property>
                     <child>
-                      <object class="GtkIconView" id="PreferencesCategories">
+                      <object class="GtkIconView" id="IconViewPreferences">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="row_spacing">0</property>
                         <property name="column_spacing">0</property>
                         <property name="margin">0</property>
                         <property name="item_padding">5</property>
-                        <signal name="selection_changed" handler="on_PreferencesCategories_selection_changed"/>
+                        <signal name="selection_changed" handler="on_IconViewPreferences_selection_changed"/>
                       </object>
                     </child>
                   </object>
@@ -119,6 +120,8 @@
                             </child>
                           </object>
                           <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
@@ -151,6 +154,8 @@
                             </child>
                           </object>
                           <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
@@ -214,11 +219,21 @@
                           <placeholder/>
                         </child>
                         <child>
-                          <object class="GtkTreeView" id="treeview1">
-                            <property name="width_request">400</property>
-                            <property name="height_request">250</property>
+                          <object class="GtkScrolledWindow" id="scrolledwindow1">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="hscrollbar_policy">automatic</property>
+                            <property name="vscrollbar_policy">automatic</property>
+                            <child>
+                              <object class="GtkTreeView" id="TreeViewAccountsList">
+                                <property name="width_request">400</property>
+                                <property name="height_request">250</property>
+                                <property name="visible">True</property>
+                                <property name="app_paintable">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="rules_hint">True</property>
+                              </object>
+                            </child>
                           </object>
                           <packing>
                             <property name="position">5</property>
@@ -229,12 +244,13 @@
                             <property name="visible">True</property>
                             <property name="layout_style">start</property>
                             <child>
-                              <object class="GtkButton" id="button3">
+                              <object class="GtkButton" id="AccountRemoveButton">
                                 <property name="label">gtk-remove</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="use_stock">True</property>
+                                <signal name="clicked" handler="on_AccountRemoveButton_clicked"/>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
