@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 	<config serial="27" timestamp="1268222307.29" version="1.0">
 		<accounts>
-			<account default="True" login="beraldoleal" password="123" pro="False"/>
 		</accounts>
 	</config>
