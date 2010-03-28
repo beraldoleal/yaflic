@@ -8,14 +8,13 @@ from SettingsHandler import *
 
 class YaflicPreferences(object):
 	def __init__(self):
-		builder = gtk.Builder()
-		builder.add_from_file("glade/yaflic-preferences.glade")
-		self.window = builder.get_object("PreferencesDialog")
-		self.categories = builder.get_object("IconViewPreferences")
-		self.treeview = builder.get_object("TreeViewAccountsList")
-		self.notebook = builder.get_object("notebook1")
+		self.builder = gtk.Builder()
+		self.builder.add_from_file("glade/yaflic-preferences.glade")
+		self.window = self.builder.get_object("PreferencesDialog")
+		self.categories = self.builder.get_object("IconViewPreferences")
+		self.notebook = self.builder.get_object("notebook1")
 
-		builder.connect_signals(self)
+		self.builder.connect_signals(self)
 
 		model = gtk.ListStore(str, gtk.gdk.Pixbuf)
 		pixbuf = gtk.gdk.pixbuf_new_from_file('images/prefs_general.png')
@@ -35,7 +34,9 @@ class YaflicPreferences(object):
 			gtk.main_iteration()
 
 		self.categories.select_path((0,))
-
+	
+		# Draw TreeView (Accounts List)
+		self.treeview = self.builder.get_object("TreeViewAccountsList")
 		pro = gtk.gdk.pixbuf_new_from_file('images/flickr_pro.gif')
 		imagerenderer = gtk.CellRendererPixbuf()
 		column_pro = gtk.TreeViewColumn('Pro', imagerenderer, pixbuf=1)
@@ -53,8 +54,14 @@ class YaflicPreferences(object):
 		self.accounts_model = gtk.ListStore(str, gtk.gdk.Pixbuf, str, str, str)
 		self.treeview.set_model(self.accounts_model)
 
+
+		self.reload_account_list()
+		self.window.show_all()
+
+	def reload_account_list(self):
 		self.preferences = SettingsHandler()
 		accounts = self.preferences.get_accounts()
+		self.accounts_model.clear()
 		for account in accounts:
 			icon=None
 			if account[3] == "True":
@@ -64,18 +71,35 @@ class YaflicPreferences(object):
 				font="sans bold 12"
 			self.accounts_model.append([font, icon, account[0], '[secret]', account[1]])
 
-		self.window.show_all()
-
-	def remove_selected_account(self, treeiter):
-		self.preferences.remove_account("beraldoleal")
+		
+	def remove_selected_account(self, treeiter, account):
+		self.preferences.remove_account(account)
 		self.accounts_model.remove(treeiter)
 
 	def on_AccountAddButton_clicked(self, *args):
-		dm = gtk.MessageDialog(self.window, gtk.DIALOG_DESTROY_WITH_PARENT,
-                           gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE,
-                           "Error to add account. Empty login or password!")
-		dm.run()
-		dm.destroy()
+		login = self.builder.get_object("LoginAccountEntry").get_text()
+		password = self.builder.get_object("PasswordAccountEntry").get_text()
+		default = self.builder.get_object("DefaultAccountCB").get_active()
+
+		account_default = "False"
+		if default is True:
+			account_default = "True"
+
+		if login == "" or password == "":
+			dm = gtk.MessageDialog(self.window, gtk.DIALOG_DESTROY_WITH_PARENT,
+                             gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE,
+                             "Error to add account. Login or password empty!")
+			dm.run()
+			dm.destroy()
+		else:
+			if not self.preferences.add_account(login, password, account_default, "False"):
+				dm = gtk.MessageDialog(self.window, gtk.DIALOG_DESTROY_WITH_PARENT,
+                               gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE,
+                               "Error to add account. Account already exists or "\
+                                "already have a default account!")
+				dm.run()
+				dm.destroy()
+		self.reload_account_list()
 
 	def on_IconViewPreferences_selection_changed(self, *args):
 		try:
@@ -91,11 +115,12 @@ class YaflicPreferences(object):
 
 		selection = self.treeview.get_selection()
 		model, treeiter = selection.get_selected()
+		model, treepath = selection.get_selected_rows()
 		if treeiter is not None:
 			response = dialog.run()
 			dialog.destroy()
 			if response == gtk.RESPONSE_YES:
-				self.remove_selected_account(treeiter)
+				self.remove_selected_account(treeiter, model[treepath[0][0]][2])
 
 	def on_OkButton_clicked(self, *args):
 		self.on_PreferencesDialog_destroy(None)

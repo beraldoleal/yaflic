@@ -109,7 +109,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry" id="entry1">
+                              <object class="GtkEntry" id="LoginAccountEntry">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="invisible_char">&#x25CF;</property>
@@ -142,7 +142,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry" id="entry2">
+                              <object class="GtkEntry" id="PasswordAccountEntry">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="visibility">False</property>
@@ -174,7 +174,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="checkbutton1">
+                              <object class="GtkCheckButton" id="DefaultAccountCB">
                                 <property name="label" translatable="yes">Default account</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>

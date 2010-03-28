@@ -24,28 +24,50 @@ class SettingsHandler():
                             account.getAttribute("pro")])
 		return accounts_dict
 
+	def add_account(self, login, password, default, pro):
+		if self.account_exists(login):
+			return False
+		else:
+			if default == "True" and self.account_default_exists():
+				return False
+			else:
+				account = self.doc.createElement("account")
+				account.setAttribute("login", login)
+				account.setAttribute("password", password)
+				account.setAttribute("default", default)
+				account.setAttribute("pro", pro)
+				accounts = self.doc.getElementsByTagName("accounts")
+				accounts[0].appendChild(account)
+				self.save_xml()
+				return True
+
+	def account_default_exists(self):
+		accounts = self.doc.getElementsByTagName("account")
+		for account in accounts:
+			if account.getAttribute("default") == "True":
+				return True
+		return False
+
+	def account_exists(self, login):
+		accounts = self.doc.getElementsByTagName("account")
+		for account in accounts:
+			if account.getAttribute("login") == login:
+				return True
+		return False
+
 	def remove_account(self, login):
 		accounts = self.doc.getElementsByTagName("account")
 		for account in accounts:
 			if account.getAttribute("login") == login:
 				account.parentNode.removeChild(account)
 				break
-		self.print_xml()
-		
+		self.save_xml()
+
+	def save_xml(self):
+		#TODO: Remove empty lines in xml file
+		filep = file("settings.xml", "w")
+		self.doc.writexml(filep, "\t", "\t", "\n", "UTF-8")
+		filep.close()
+				
 	def print_xml(self):
 		print self.doc.toxml("UTF-8")
-
-
-#settings = SettingsHandler()
-#print settings.get_accounts()
-
-#another = doc.createElement("account")
-#another.setAttribute("login", "maria")
-#accounts.item(0).appendChild(another)
-
-
-#for dom1 in doc.getElementsByTagName("accounts"):
-#	login = dom1.getAttribute("login")
-#	password = dom1.getAttribute("password")
-#	default = dom1.getAttribute("default")
-
